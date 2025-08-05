@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Quiz de "O Verão Que Mudou a Minha Vida</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f4f8;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: #333;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .quiz-container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .question {
+            font-size: 1.5rem;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .options {
+            list-style: none;
+            padding: 0;
+        }
+
+        .option {
+            background-color: #f2f2f2;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .option:hover {
+            background-color: #4caf50;
+            color: #fff;
+            transform: scale(1.05);
+        }
+
+        .option.incorrect:hover {
+            background-color: #e74c3c;
+        }
+
+        .option.correct {
+            background-color: #4caf50;
+            color: #fff;
+        }
+
+        .result {
+            font-size: 1.25rem;
+            font-weight: bold;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Quiz de Inteligência Artificial</h1>
+    <div class="quiz-container">
+        <div id="question-container">
+            <!-- Questões serão carregadas aqui via JavaScript -->
+        </div>
+        <div class="result hidden" id="final-result">Pontuação final: <span id="score"></span></div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                question: "Qual o nome da protagonista",
+                options: [
+                    { text: "Susannah.", correct: false },
+                    { text: "Belly.", correct: true },
+                    { text: "Taylor.", correct: false },
+                    { text: "Bella.", correct: false }
+                ]
+            },
+            {
+                question: "Onde eles (Steven, Belly, Laurel) vão passar o verão?",
+                options: [
+                    { text: "Los Angeles.", correct: false },
+                    { text: "Cousins Beach.", correct: true },
+                    { text: "Califórnia.", correct: false },
+                    { text: "Miami.", correct: false }
+                ]
+            },
+            {
+                question: "Com quem foi o primeiro beijo de Belly?",
+                options: [
+                    { text: "Cameron.", correct: true },
+                    { text: "Jeremiah.", correct: false },
+                    { text: "Conrad.", correct: false },
+                    { text: "Steven.", correct: false }
+                ]
+            },
+            {
+                question: "Belly sempre foi apaixonada por...?",
+                options: [
+                    { text: "Conrad.", correct: true },
+                    { text: "Jeremiah.", correct: false },
+                    { text: "Steven.", correct: false },
+                    { text: "Cameron.", correct: false }
+                ]
+            },
+            {
+                question: "Belly vai ao baile de debutante do clube, mas com quem ela vai.' (SVM)?",
+                options: [
+                    { text: "Jeremiah.", correct: true },
+                    { text: "Cameron.", correct: false },
+                    { text: "Conrad.", correct: false },
+                    { text: "Steven.", correct: false }
+                ]
+            }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+
+        function loadQuestion() {
+            // Limpar a pergunta anterior
+            document.getElementById('question-container').innerHTML = '';
+
+            if (currentQuestion < questions.length) {
+                const questionObj = questions[currentQuestion];
+                let optionsHTML = '';
+
+                questionObj.options.forEach(option => {
+                    optionsHTML += `<li class="option" data-correct="${option.correct}">${option.text}</li>`;
+                });
+
+                document.getElementById('question-container').innerHTML = `
+                    <div class="question">${questionObj.question}</div>
+                    <ul class="options">${optionsHTML}</ul>
+                `;
+                attachOptionEvents();
+            } else {
+                showFinalScore();
+            }
+        }
+
+        function attachOptionEvents() {
+            const options = document.querySelectorAll('.option');
+            options.forEach(option => {
+                option.addEventListener('click', () => {
+                    // Desativar todas as opções após clicar
+                    options.forEach(opt => opt.style.pointerEvents = 'none');
+                    const isCorrect = option.getAttribute('data-correct') === 'true';
+
+                    // Exibir feedback de resposta
+                    const feedbackMessage = document.createElement('div');
+                    feedbackMessage.classList.add('result');
+                    feedbackMessage.textContent = isCorrect ? 'Resposta correta! 🎉' : 'Resposta errada! ❌';
+                    document.getElementById('question-container').appendChild(feedbackMessage);
+
+                    // Marcar a opção como correta ou incorreta
+                    option.classList.add(isCorrect ? 'correct' : 'incorrect');
+
+                    // Incrementar a pontuação
+                    if (isCorrect) {
+                        score++;
+                    }
+
+                    // Esperar 2 segundos para mostrar a próxima questão
+                    setTimeout(() => {
+                        currentQuestion++;
+                        loadQuestion();
+                    }, 2000);
+                });
+            });
+        }
+
+        function showFinalScore() {
+            document.getElementById('score').textContent = `${score} de ${questions.length}`;
+            document.getElementById('final-result').classList.remove('hidden');
+        }
+
+        loadQuestion();
+    </script>
+</body>
+</html>
+
